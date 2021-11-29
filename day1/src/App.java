@@ -12,9 +12,9 @@ public class App {
 
     private static long solution1(List<String> lines) {
         for (int x = 0; x < lines.size(); x++) {
-            var candidate1 = Integer.parseInt(lines.get(x));
+            var candidate1 = parseLine(lines, x);
             for (int y = x+1; y < lines.size(); y++) {
-                var candidate2 = Integer.parseInt(lines.get(y));
+                var candidate2 = parseLine(lines, y);
                 if (candidate1 + candidate2 == 2020) {
                     return (long) candidate1 * candidate2;
                 }
@@ -24,18 +24,31 @@ public class App {
     }
 
     private static long solution2(List<String> lines) {
+        final int magicNr = 2020;
         for (int x = 0; x < lines.size(); x++) {
-            var candidate1 = Integer.parseInt(lines.get(x));
+            var candidate1 = parseLine(lines, x);
+            if (candidate1 > 2020) {
+                continue;
+            }
+
             for (int y = x+1; y < lines.size(); y++) {
-                var candidate2 = Integer.parseInt(lines.get(y));
+                var candidate2 = parseLine(lines, y);
+                if (candidate1 + candidate2 > magicNr) {
+                    continue;
+                }
+
                 for (int z = y+1; z < lines.size(); z++) {
-                    var candidate3 = Integer.parseInt(lines.get(z));
-                    if (candidate1 + candidate2 + candidate3 == 2020) {
+                    var candidate3 = parseLine(lines, z);
+                    if (candidate1 + candidate2 + candidate3 == magicNr) {
                         return (long) candidate1 * candidate2 * candidate3;
                     }
                 }
             }
         }
         throw new IllegalStateException("Didn't find a solution");
+    }
+
+    private static int parseLine(List<String> lines, int x) {
+        return Integer.parseInt(lines.get(x));
     }
 }
