@@ -1,7 +1,10 @@
-FROM ghcr.io/graalvm/graalvm-ce:latest
+FROM ghcr.io/graalvm/graalvm-ce:latest as BASE
 WORKDIR /opt/graalvm
 RUN gu install native-image
 COPY App.java App.java
-COPY input.txt input.txt
-RUN javac App.java && native-image App
+RUN javac App.java && native-image "--static" App
+
+FROM alpine
+COPY --from=BASE /opt/graalvm/app app
+COPY input.txt .
 CMD ["./app"]
