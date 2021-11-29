@@ -1,46 +1,33 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Predicate;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        Predicate<PolicyAndPassword> test = "1".equals(System.getenv("solution")) ?
-                PolicyAndPassword::isValidSolution1 :
-                PolicyAndPassword::isValidSolution2;
+        RuleValidator validator = "1".equals(System.getenv("solution")) ?
+                App::compliesWithRuleSolution1 :
+                App::compliesWithRuleSolution2;
 
         try (var lines = Files.lines(Paths.get("input.txt"))) {
-            var validPasswords = lines.map(PolicyAndPassword::from)
-                    .filter(test)
+            var validPasswords = lines.map(RuleAndPassword::from)
+                    .filter(ruleAndPassword -> validator.compliesWithRule(ruleAndPassword.password(), ruleAndPassword.rule()))
                     .count();
             System.out.println(validPasswords);
         }
     }
 
-    record PolicyAndPassword(PasswordPolicy policy, String password) {
-        static PolicyAndPassword from(String line) {
+    record RuleAndPassword(PasswordRule rule, String password) {
+        static RuleAndPassword from(String line) {
             var split = line.split(": ");
-            return new PolicyAndPassword(PasswordPolicy.from(split[0]), split[1]);
-        }
-
-        boolean isValidSolution1() {
-            var count = password.chars().filter(c -> policy.character == c).count();
-            return policy.positions.includes(count);
-        }
-
-        boolean isValidSolution2() {
-            var lowChar = password.charAt(policy.positions.low - 1);
-            var highChar = password.charAt(policy.positions.high - 1);
-
-            return (lowChar == policy.character || highChar == policy.character) && lowChar != highChar;
+            return new RuleAndPassword(PasswordRule.from(split[0]), split[1]);
         }
     }
 
-    record PasswordPolicy(Positions positions, Character character) {
-        static PasswordPolicy from(String encoded) {
+    record PasswordRule(Positions positions, Character character) {
+        static PasswordRule from(String encoded) {
             var split = encoded.split("[\\s-]+");
             var range = new Positions(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            return new PasswordPolicy(range, split[2].charAt(0));
+            return new PasswordRule(range, split[2].charAt(0));
         }
     }
 
@@ -48,5 +35,22 @@ public class App {
         boolean includes(long i) {
             return i >= low && i <= high;
         }
+    }
+
+    @FunctionalInterface
+    interface RuleValidator {
+        boolean compliesWithRule(String password, PasswordRule rule);
+    }
+
+    static boolean compliesWithRuleSolution1(String password, PasswordRule rule) {
+        var count = password.chars().filter(c -> rule.character == c).count();
+        return rule.positions.includes(count);
+    }
+
+    static boolean compliesWithRuleSolution2(String password, PasswordRule rule) {
+        var lowChar = password.charAt(rule.positions.low - 1);
+        var highChar = password.charAt(rule.positions.high - 1);
+
+        return (lowChar == rule.character || highChar == rule.character) && lowChar != highChar;
     }
 }
