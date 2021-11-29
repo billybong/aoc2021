@@ -1,0 +1,1 @@
+time docker run aoc
