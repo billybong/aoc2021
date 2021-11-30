@@ -31,11 +31,7 @@ public class App {
         }
     }
 
-    record Positions(int low, int high) {
-        boolean includes(long i) {
-            return i >= low && i <= high;
-        }
-    }
+    record Positions(int low, int high) {}
 
     @FunctionalInterface
     interface RuleValidator {
@@ -44,7 +40,7 @@ public class App {
 
     static boolean compliesWithRuleSolution1(String password, PasswordRule rule) {
         var count = password.chars().filter(c -> rule.character == c).count();
-        return rule.positions.includes(count);
+        return count >= rule.positions.low && count <= rule.positions.high;
     }
 
     static boolean compliesWithRuleSolution2(String password, PasswordRule rule) {
