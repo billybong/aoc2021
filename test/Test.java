@@ -3,11 +3,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import static java.util.Map.entry;
@@ -19,7 +17,7 @@ public class Test {
     );
 
     public static void main(String[] args) throws IOException {
-        var days = args.length == 1 ? Stream.of(findDay(Integer.parseInt(args[0]))) : findDays();
+        var days = args.length == 1 ? Stream.of(findDay(Integer.parseInt(args[0]))) : findAllDays();
         testDays(days);
     }
 
@@ -69,8 +67,8 @@ public class Test {
         return new Answer(solution1, solution2);
     }
 
-    private static String runTest(Path day, int number) throws IOException, InterruptedException {
-        var process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + number, "aoc"))
+    private static String runTest(Path day, int part) throws IOException, InterruptedException {
+        var process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + part, "aoc"))
                 .directory(day.toFile())
                 .start();
 
@@ -81,13 +79,14 @@ public class Test {
 
     private static Path findDay(int day) throws IOException {
         var dayName = "day" + (day < 10 ? "0" + day : String.valueOf(day));
-        BiPredicate<Path, BasicFileAttributes> filter = (path, attr) -> path.getFileName().toString().equals(dayName) && Files.isDirectory(path);
-        try (var pathStream = Files.find(Paths.get("../"), 2, filter)) {
-            return pathStream.findFirst().orElseThrow();
-        }
+
+        return findAllDays()
+                .filter(path -> path.getFileName().toString().equals(dayName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Couldn't find " + dayName));
     }
 
-    private static Stream<Path> findDays() throws IOException {
+    private static Stream<Path> findAllDays() throws IOException {
         return Files.find(Paths.get("../"), 2, (path, attr) -> path.getFileName().toString().startsWith("day") && Files.isDirectory(path))
                 .filter(dir -> Files.exists(dir.resolve("Dockerfile")));
     }
