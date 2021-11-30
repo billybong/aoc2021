@@ -16,8 +16,8 @@ import static java.util.Map.entry;
 public class Test {
 
     static final Map<String, Answer> ANSWERS = Map.ofEntries(
-            entry("day1", new Answer("211899", "275765682")),
-            entry("day2", new Answer("410", "694"))
+            entry("day01", new Answer("211899", "275765682")),
+            entry("day02", new Answer("410", "694"))
     );
 
     public static void main(String[] args) throws IOException {
@@ -67,7 +67,7 @@ public class Test {
     }
 
     private static String runTest(Path day, int number) throws IOException, InterruptedException {
-        var solution1Process = new ProcessBuilder(List.of("docker", "run", "-e", "solution=" + number, "aoc"))
+        var solution1Process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + number, "aoc"))
                 .directory(day.toFile())
                 .start();
 
@@ -77,16 +77,18 @@ public class Test {
     }
 
     private static Path findDay(int day) throws IOException {
-        BiPredicate<Path, BasicFileAttributes> filter = (path, attr) -> path.getFileName().toString().equals("day" + day) && Files.isDirectory(path);
+        var dayName = "day" + (day < 10 ? "0" + day : String.valueOf(day));
+        BiPredicate<Path, BasicFileAttributes> filter = (path, attr) -> path.getFileName().toString().equals(dayName) && Files.isDirectory(path);
         try (var pathStream = Files.find(Paths.get("../"), 2, filter)) {
             return pathStream.findFirst().orElseThrow();
         }
     }
 
     private static Stream<Path> findDays() throws IOException {
-        return Files.find(Paths.get("../"), 2, (path, attr) -> path.getFileName().toString().startsWith("day") && Files.isDirectory(path));
+        return Files.find(Paths.get("../"), 2, (path, attr) -> path.getFileName().toString().startsWith("day") && Files.isDirectory(path))
+                .filter(dir -> Files.exists(dir.resolve("Dockerfile")));
     }
 
-    record Answer(String solution1, String solution2) {
+    record Answer(String part1, String part2) {
     }
 }

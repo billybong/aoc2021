@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        RuleValidator validator = "1".equals(System.getenv("solution")) ?
+        RuleValidator validator = "part1".equals(System.getenv("part")) ?
                 App::compliesWithRuleSolution1 :
                 App::compliesWithRuleSolution2;
 

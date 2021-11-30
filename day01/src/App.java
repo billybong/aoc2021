@@ -6,7 +6,7 @@ import java.util.List;
 public class App {
     public static void main(String[] args) throws IOException {
         final List<String> lines = Files.readAllLines(Paths.get("input.txt"));
-        final long result = "1".equals(System.getenv("solution")) ? solution1(lines) : solution2(lines);
+        final long result = "part1".equals(System.getenv("part")) ? solution1(lines) : solution2(lines);
         System.out.println(result);
     }
 
