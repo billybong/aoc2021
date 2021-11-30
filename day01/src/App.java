@@ -7,16 +7,16 @@ import java.util.stream.IntStream;
 public class App {
 
     public static void main(String[] args) throws IOException {
-        final List<Integer> lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt).boxed().toList();
+        final int[] lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt).toArray();
         final long result = "part1".equals(System.getenv("part")) ? part1(lines) : part2(lines);
         System.out.println(result);
     }
 
-    private static long part1(List<Integer> lines) {
+    private static long part1(int[] lines) {
         int sum = 0;
 
-        for (int i = 0; i < lines.size(); i++) {
-            final int nr = lines.get(i);
+        for (int i = 0; i < lines.length; i++) {
+            final int nr = lines[i];
             if (isPrime(nr)) {
                 sum += nr * i;
             }
@@ -25,17 +25,13 @@ public class App {
         return sum;
     }
 
-    private static long part2(List<Integer> lines) {
+    private static long part2(int[] lines) {
         int sum = 0;
 
-        for (int i = 0; i < lines.size(); i++) {
-            final int nr = lines.get(i);
+        for (int i = 0; i < lines.length; i++) {
+            final int nr = lines[i];
             if (!isPrime(nr)) {
-                if (i % 2 == 0) {
-                    sum += nr;
-                } else {
-                    sum -= nr;
-                }
+                sum += i % 2 == 0 ? nr : -nr;
             }
         }
 
