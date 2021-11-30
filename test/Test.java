@@ -7,7 +7,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -16,8 +15,7 @@ import static java.util.Map.entry;
 public class Test {
 
     static final Map<String, Answer> ANSWERS = Map.ofEntries(
-            entry("day01", new Answer("211899", "275765682")),
-            entry("day02", new Answer("410", "694"))
+            entry("day01", new Answer("211899", "275765682"))
     );
 
     public static void main(String[] args) throws IOException {
