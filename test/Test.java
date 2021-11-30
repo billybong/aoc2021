@@ -32,13 +32,18 @@ public class Test {
             try {
                 var directory = day.getFileName().toString();
                 var expectedAnswer = ANSWERS.get(directory);
-                var answer = executeDay(day);
+                if (expectedAnswer != null) {
+                    var answer = executeDay(day);
 
-                if (!expectedAnswer.equals(answer)) {
-                    errors.add("%s produced wrong answer %s, expected %s%n".formatted(directory, answer, expectedAnswer));
+                    if (!expectedAnswer.equals(answer)) {
+                        errors.add("%s produced wrong answer %s, expected %s%n".formatted(directory, answer, expectedAnswer));
+                    } else {
+                        correct.add(day.getFileName().toString());
+                    }
                 } else {
-                    correct.add(day.getFileName().toString());
+                    errors.add("%s doesn't have an expected answer!".formatted(directory));
                 }
+
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
