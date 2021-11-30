@@ -7,11 +7,11 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         final int[] lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt).toArray();
-        final long result = "part1".equals(System.getenv("part")) ? part1(lines) : part2(lines);
+        final int result = "part1".equals(System.getenv("part")) ? part1(lines) : part2(lines);
         System.out.println(result);
     }
 
-    private static long part1(int[] lines) {
+    private static int part1(int[] lines) {
         int sum = 0;
 
         for (int i = 0; i < lines.length; i++) {
@@ -24,7 +24,7 @@ public class App {
         return sum;
     }
 
-    private static long part2(int[] lines) {
+    private static int part2(int[] lines) {
         int sum = 0;
 
         for (int i = 0; i < lines.length; i++) {
