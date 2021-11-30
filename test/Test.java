@@ -3,10 +3,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import static java.util.Map.entry;
@@ -19,12 +21,12 @@ public class Test {
     );
 
     public static void main(String[] args) throws IOException {
-        var days = findDays();
+        var days = args.length == 1 ? Stream.of(findDay(Integer.parseInt(args[0]))) : findDays();
         testDays(days);
     }
 
     private static void testDays(Stream<Path> days) {
-        var correct = new LongAdder();
+        var correct = new ArrayList<String>();
         var errors = new ArrayList<String>();
 
         days.forEach(day -> {
@@ -37,7 +39,7 @@ public class Test {
                 if (!expectedAnswer.equals(answer)) {
                     errors.add("%s produced wrong answer %s, expected %s%n".formatted(directory, answer, expectedAnswer));
                 } else {
-                    correct.increment();
+                    correct.add(day.getFileName().toString());
                 }
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -47,7 +49,7 @@ public class Test {
         if (!errors.isEmpty()) {
             errors.forEach(System.err::println);
         } else {
-            System.out.println("Got " + correct.intValue() + " answers correct!");
+            System.out.println("Got " + correct.size() + " answers correct! " + correct);
         }
     }
 
@@ -58,20 +60,27 @@ public class Test {
                 .start()
                 .waitFor();
 
-        final String solution1 = runTest(day, 1);
-        final String solution2 = runTest(day, 2);
+        var solution1 = runTest(day, 1);
+        var solution2 = runTest(day, 2);
 
         return new Answer(solution1, solution2);
     }
 
     private static String runTest(Path day, int number) throws IOException, InterruptedException {
-        final Process solution1Process = new ProcessBuilder(List.of("docker", "run", "-e", "solution=" + number, "aoc"))
+        var solution1Process = new ProcessBuilder(List.of("docker", "run", "-e", "solution=" + number, "aoc"))
                 .directory(day.toFile())
                 .start();
 
-        final String solution = new String(solution1Process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+        var solution = new String(solution1Process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
         solution1Process.waitFor();
         return solution;
+    }
+
+    private static Path findDay(int day) throws IOException {
+        BiPredicate<Path, BasicFileAttributes> filter = (path, attr) -> path.getFileName().toString().equals("day" + day) && Files.isDirectory(path);
+        try (var pathStream = Files.find(Paths.get("../"), 2, filter)) {
+            return pathStream.findFirst().orElseThrow();
+        }
     }
 
     private static Stream<Path> findDays() throws IOException {

@@ -1,2 +1,2 @@
 #!/bin/sh
-java ./test/Test.java
+java ./test/Test.java $1
