@@ -2,55 +2,48 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class App {
 
-    public static final int MAGIC_NR = 2020;
-
     public static void main(String[] args) throws IOException {
-        final List<String> lines = Files.readAllLines(Paths.get("input.txt"));
+        final List<Integer> lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt).boxed().toList();
         final long result = "part1".equals(System.getenv("part")) ? part1(lines) : part2(lines);
         System.out.println(result);
     }
 
-    private static long part1(List<String> lines) {
-        for (int x = 0; x < lines.size(); x++) {
-            var candidate1 = parseLine(lines, x);
-            for (int y = x + 1; y < lines.size(); y++) {
-                var candidate2 = parseLine(lines, y);
-                if (candidate1 + candidate2 == MAGIC_NR) {
-                    return (long) candidate1 * candidate2;
+    private static long part1(List<Integer> lines) {
+        int sum = 0;
+
+        for (int i = 0; i < lines.size(); i++) {
+            final int nr = lines.get(i);
+            if (isPrime(nr)) {
+                sum += nr * i;
+            }
+        }
+
+        return sum;
+    }
+
+    private static long part2(List<Integer> lines) {
+        int sum = 0;
+
+        for (int i = 0; i < lines.size(); i++) {
+            final int nr = lines.get(i);
+            if (!isPrime(nr)) {
+                if (i % 2 == 0) {
+                    sum += nr;
+                } else {
+                    sum -= nr;
                 }
             }
         }
-        throw new IllegalStateException("Didn't find a solution");
+
+        return sum;
     }
 
-    private static long part2(List<String> lines) {
-        for (int x = 0; x < lines.size(); x++) {
-            var candidate1 = parseLine(lines, x);
-            if (candidate1 > MAGIC_NR) {
-                continue;
-            }
-
-            for (int y = x + 1; y < lines.size(); y++) {
-                var candidate2 = parseLine(lines, y);
-                if (candidate1 + candidate2 > MAGIC_NR) {
-                    continue;
-                }
-
-                for (int z = y + 1; z < lines.size(); z++) {
-                    var candidate3 = parseLine(lines, z);
-                    if (candidate1 + candidate2 + candidate3 == MAGIC_NR) {
-                        return (long) candidate1 * candidate2 * candidate3;
-                    }
-                }
-            }
-        }
-        throw new IllegalStateException("Didn't find a solution");
-    }
-
-    private static int parseLine(List<String> lines, int x) {
-        return Integer.parseInt(lines.get(x));
+    private static boolean isPrime(int number) {
+        return number > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(number))
+                .noneMatch(n -> (number % n == 0));
     }
 }
