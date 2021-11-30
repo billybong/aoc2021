@@ -6,39 +6,20 @@ import java.util.stream.IntStream;
 public class App {
 
     public static void main(String[] args) throws IOException {
-        final int[] lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt).toArray();
-        final int result = "part1".equals(System.getenv("part")) ? part1(lines) : part2(lines);
-        System.out.println(result);
-    }
-
-    private static int part1(int[] lines) {
-        int sum = 0;
-
-        for (int i = 0; i < lines.length; i++) {
-            final int nr = lines[i];
-            if (isPrime(nr)) {
-                sum += nr * i;
-            }
-        }
-
-        return sum;
-    }
-
-    private static int part2(int[] lines) {
-        int sum = 0;
-
-        for (int i = 0; i < lines.length; i++) {
-            final int nr = lines[i];
-            if (!isPrime(nr)) {
-                sum += i % 2 == 0 ? nr : -nr;
-            }
-        }
-
-        return sum;
+        final IntStream lines = Files.readAllLines(Paths.get("input.txt")).stream().mapToInt(Integer::parseInt);
+        final BiIntFunction mapper = "part1".equals(System.getenv("part")) ?
+                (index, number) -> isPrime(number) ? number * index : 0 :
+                (index, number) -> isPrime(number) ? 0 : index % 2 == 0 ? number : -number;
+        final int[] index = {-1};
+        System.out.println(lines.reduce(0, (prev, current) -> prev + mapper.apply(++index[0], current)));
     }
 
     private static boolean isPrime(int number) {
-        return number > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(number))
-                .noneMatch(n -> (number % n == 0));
+        return number > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(number)).noneMatch(n -> (number % n == 0));
+    }
+
+    @FunctionalInterface
+    interface BiIntFunction {
+        int apply(int index, int number);
     }
 }
