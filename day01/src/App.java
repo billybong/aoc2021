@@ -5,16 +5,21 @@ import java.util.function.IntBinaryOperator;
 import java.util.stream.IntStream;
 
 public class App {
+    public static final IntBinaryOperator SOLUTION = "part2".equals(System.getenv("part")) ? App::part2 : App::part1;
 
     public static void main(String[] args) throws IOException {
-        final IntBinaryOperator operator = "part1".equals(System.getenv("part")) ?
-                (index, number) -> isPrime(number) ? number * index : 0 :
-                (index, number) -> isPrime(number) ? 0 : index % 2 == 0 ? number : -number;
-        final int[] index = {-1};
-        final int result = Files.readAllLines(Paths.get("input.txt")).stream()
-                .mapToInt(Integer::parseInt)
-                .reduce(0, (prev, current) -> prev + operator.applyAsInt(++index[0], current));
-        System.out.println(result);
+        try (var numbers = Files.lines(Paths.get("input.txt")).mapToInt(Integer::parseInt)) {
+            final int[] index = {0};
+            System.out.println(numbers.reduce(0, (prev, current) -> prev + SOLUTION.applyAsInt(index[0]++, current)));
+        }
+    }
+
+    private static int part1(int index, int number) {
+        return isPrime(number) ? number * index : 0;
+    }
+
+    private static int part2(int index, int number) {
+        return isPrime(number) ? 0 : index % 2 == 0 ? number : -number;
     }
 
     private static boolean isPrime(int number) {
