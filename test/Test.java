@@ -65,12 +65,12 @@ public class Test {
     }
 
     private static String runTest(Path day, int number) throws IOException, InterruptedException {
-        var solution1Process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + number, "aoc"))
+        var process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + number, "aoc"))
                 .directory(day.toFile())
                 .start();
 
-        var solution = new String(solution1Process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
-        solution1Process.waitFor();
+        var solution = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+        process.waitFor();
         return solution;
     }
 
