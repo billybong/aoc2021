@@ -22,35 +22,29 @@ public class App {
         return count[0];
     }
 
-    private static int part2(IntStream numbers, int windowSize) {
-        var result = new MutableInt(0);
-        var index = new MutableInt(0);
-        var windows = new ArrayDeque<MutableInt>(windowSize);
+    private static long part2(IntStream numbers, int windowSize) {
+        var windows = new ArrayDeque<MutableInt>(windowSize + 1);
 
-        numbers.forEach(nr -> {
-            if (index.getAndIncrement() >= windowSize && windows.removeFirst().value < windows.peekFirst().value + nr) {
-                result.getAndIncrement();
-            }
-            windows.forEach(value -> value.add(nr));
-            windows.add(new MutableInt(nr));
-        });
-
-        return result.value;
+        return numbers.peek(nr -> {
+                    windows.forEach(value -> value.add(nr));
+                    windows.add(new MutableInt(nr));
+                })
+                .skip(windowSize)
+                .map(nr -> windows.removeFirst().value - nr)
+                .filter(head -> head < windows.peekFirst().value)
+                .count();
     }
 
     static class MutableInt {
         int value;
 
-        private MutableInt(int value) {
-            this.value = value;
+        private MutableInt(int initial) {
+            this.value = initial;
         }
 
-        public void add(int delta) {
+        public MutableInt add(int delta) {
             value += delta;
-        }
-
-        public int getAndIncrement() {
-            return value++;
+            return this;
         }
     }
 }
