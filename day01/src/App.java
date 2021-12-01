@@ -26,7 +26,7 @@ public class App {
         var windows = new ArrayDeque<MutableInt>(windowSize + 1);
 
         return numbers.peek(nr -> {
-                    windows.forEach(value -> value.add(nr));
+                    windows.forEach(value -> value.increment(nr));
                     windows.add(new MutableInt(nr));
                 })
                 .skip(windowSize)
@@ -42,9 +42,8 @@ public class App {
             this.value = initial;
         }
 
-        public MutableInt add(int delta) {
+        public void increment(int delta) {
             value += delta;
-            return this;
         }
     }
 }
