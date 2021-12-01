@@ -23,20 +23,19 @@ public class App {
     }
 
     private static int part2(IntStream numbers, int windowSize) {
-        int[] result = new int[]{0};
-        int[] index = new int[]{0};
+        var result = new MutableInt(0);
+        var index = new MutableInt(0);
         var windows = new ArrayDeque<MutableInt>(windowSize);
 
         numbers.forEach(nr -> {
-            final int i = index[0]++;
-            if (i >= windowSize && windows.removeFirst().value < windows.peekFirst().value + nr) {
-                result[0]++;
+            if (index.getAndIncrement() >= windowSize && windows.removeFirst().value < windows.peekFirst().value + nr) {
+                result.getAndIncrement();
             }
             windows.forEach(value -> value.add(nr));
             windows.add(new MutableInt(nr));
         });
 
-        return result[0];
+        return result.value;
     }
 
     static class MutableInt {
@@ -48,6 +47,10 @@ public class App {
 
         public void add(int delta) {
             value += delta;
+        }
+
+        public int getAndIncrement() {
+            return value++;
         }
     }
 }
