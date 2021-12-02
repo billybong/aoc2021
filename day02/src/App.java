@@ -16,6 +16,9 @@ public class App {
         int depth = 0;
 
         for (String line : lines) {
+            if (line.isEmpty()) {
+                break;
+            }
             var command = new StringTokenizer(line, " ", false);
             var direction = command.nextToken();
             int steps = Integer.parseInt(command.nextToken());
@@ -35,6 +38,9 @@ public class App {
         int aim = 0;
 
         for (String line : lines) {
+            if (line.isEmpty()) {
+                break;
+            }
             var command = new StringTokenizer(line, " ", false);
             var direction = command.nextToken();
             int steps = Integer.parseInt(command.nextToken());
