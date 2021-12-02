@@ -21,7 +21,7 @@ public class App {
         return count[0];
     }
 
-    private static long part2(int[] numbers, int windowSize) {
+    private static int part2(int[] numbers, int windowSize) {
         int result = 0;
         final int lastIndex = numbers.length - windowSize;
         for (int i = 0; i < lastIndex; i++) {
