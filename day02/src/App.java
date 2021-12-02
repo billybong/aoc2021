@@ -17,11 +17,12 @@ public class App {
 
         for (String line : lines) {
             var command = new StringTokenizer(line, " ", false);
-            switch (command.nextToken()) {
-                case "up" -> depth -= Integer.parseInt(command.nextToken());
-                case "down" -> depth += Integer.parseInt(command.nextToken());
-                case "forward" -> pos += Integer.parseInt(command.nextToken());
-                default -> {}
+            var direction = command.nextToken();
+            int steps = Integer.parseInt(command.nextToken());
+            switch (direction) {
+                case "up" -> depth -= steps;
+                case "down" -> depth += steps;
+                case "forward" -> pos += steps;
             }
         }
 
@@ -35,15 +36,15 @@ public class App {
 
         for (String line : lines) {
             var command = new StringTokenizer(line, " ", false);
-            switch (command.nextToken()) {
-                case "up" -> aim -= Integer.parseInt(command.nextToken());
-                case "down" -> aim += Integer.parseInt(command.nextToken());
+            var direction = command.nextToken();
+            int steps = Integer.parseInt(command.nextToken());
+            switch (direction) {
+                case "up" -> aim -= steps;
+                case "down" -> aim += steps;
                 case "forward" -> {
-                    int value = Integer.parseInt(command.nextToken());
-                    pos += value;
-                    depth += aim * value;
+                    pos += steps;
+                    depth += aim * steps;
                 }
-                default -> {}
             }
         }
 
