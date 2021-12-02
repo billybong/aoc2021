@@ -3,11 +3,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
+import java.util.StringTokenizer;
 
 public class App {
-    private static final Pattern SEPARATOR = Pattern.compile(" ");
-
     public static void main(String[] args) throws IOException {
         var lines = Files.readAllLines(Paths.get("input.txt"));
         System.out.println("part2".equals(System.getenv("part")) ? part2(lines) : part1(lines));
@@ -51,8 +49,8 @@ public class App {
 
     record Command(Direction direction, int steps) {
         static Command parse(String line) {
-            var split = SEPARATOR.split(line);
-            return new Command(Direction.from(split[0]), Integer.parseInt(split[1]));
+            var tokens = new StringTokenizer(line, " ", false);
+            return new Command(Direction.from(tokens.nextToken()), Integer.parseInt(tokens.nextToken()));
         }
     }
 
