@@ -16,11 +16,12 @@ public class App {
         int depth = 0;
 
         for (String line : lines) {
-            var command = Command.parse(line);
-            switch (command.direction) {
-                case up -> depth -= command.steps;
-                case down -> depth += command.steps;
-                case forward -> pos += command.steps;
+            var command = new StringTokenizer(line, " ", false);
+            switch (command.nextToken()) {
+                case "up" -> depth -= Integer.parseInt(command.nextToken());
+                case "down" -> depth += Integer.parseInt(command.nextToken());
+                case "forward" -> pos += Integer.parseInt(command.nextToken());
+                default -> {}
             }
         }
 
@@ -33,26 +34,19 @@ public class App {
         int aim = 0;
 
         for (String line : lines) {
-            var command = Command.parse(line);
-            switch (command.direction) {
-                case up -> aim -= command.steps;
-                case down -> aim += command.steps;
-                case forward -> {
-                    pos += command.steps;
-                    depth += aim * command.steps;
+            var command = new StringTokenizer(line, " ", false);
+            switch (command.nextToken()) {
+                case "up" -> aim -= Integer.parseInt(command.nextToken());
+                case "down" -> aim += Integer.parseInt(command.nextToken());
+                case "forward" -> {
+                    int value = Integer.parseInt(command.nextToken());
+                    pos += value;
+                    depth += aim * value;
                 }
+                default -> {}
             }
         }
 
         return pos * depth;
     }
-
-    record Command(Direction direction, int steps) {
-        static Command parse(String line) {
-            var tokens = new StringTokenizer(line, " ", false);
-            return new Command(Direction.valueOf(tokens.nextToken()), Integer.parseInt(tokens.nextToken()));
-        }
-    }
-
-    enum Direction {forward, down, up}
 }
