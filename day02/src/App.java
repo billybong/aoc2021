@@ -18,9 +18,9 @@ public class App {
         for (String line : lines) {
             var command = Command.parse(line);
             switch (command.direction) {
-                case UP -> depth -= command.steps;
-                case DOWN -> depth += command.steps;
-                case FORWARD -> pos += command.steps;
+                case up -> depth -= command.steps;
+                case down -> depth += command.steps;
+                case forward -> pos += command.steps;
             }
         }
 
@@ -35,9 +35,9 @@ public class App {
         for (String line : lines) {
             var command = Command.parse(line);
             switch (command.direction) {
-                case UP -> aim -= command.steps;
-                case DOWN -> aim += command.steps;
-                case FORWARD -> {
+                case up -> aim -= command.steps;
+                case down -> aim += command.steps;
+                case forward -> {
                     pos += command.steps;
                     depth += aim * command.steps;
                 }
@@ -50,15 +50,9 @@ public class App {
     record Command(Direction direction, int steps) {
         static Command parse(String line) {
             var tokens = new StringTokenizer(line, " ", false);
-            return new Command(Direction.from(tokens.nextToken()), Integer.parseInt(tokens.nextToken()));
+            return new Command(Direction.valueOf(tokens.nextToken()), Integer.parseInt(tokens.nextToken()));
         }
     }
 
-    enum Direction {
-        FORWARD, DOWN, UP;
-
-        public static Direction from(String s) {
-            return Direction.valueOf(s.toUpperCase(Locale.ROOT));
-        }
-    }
+    enum Direction {forward, down, up}
 }
