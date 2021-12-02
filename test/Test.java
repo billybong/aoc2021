@@ -13,7 +13,8 @@ import static java.util.Map.entry;
 public class Test {
 
     static final Map<String, Answer> ANSWERS = Map.ofEntries(
-            entry("day01", new Answer("1301", "1346"))
+            entry("day01", new Answer("1301", "1346")),
+            entry("day02", new Answer("0", "0"))
     );
 
     public static void main(String[] args) throws IOException {
