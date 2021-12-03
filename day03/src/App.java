@@ -1,7 +1,10 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class App {
     private static final short LINE_WIDTH = 12;
@@ -12,7 +15,7 @@ public class App {
     }
 
     private static int part1(List<String> lines) {
-        short gammaB = 0;
+        short gamma = 0;
         short epsilon = 0;
         short[] occurrences = new short[LINE_WIDTH];
 
@@ -28,52 +31,47 @@ public class App {
 
         for (byte i = 0; i < occurrences.length; i++) {
             if(occurrences[occurrences.length - 1 - i] > 0) {
-                gammaB |= (1 << i);
+                gamma |= (1 << i);
                 epsilon &= ~(1 << i);
             } else {
-                gammaB &= ~(1 << i);
+                gamma &= ~(1 << i);
                 epsilon |= (1 << i);
             }
         }
 
-        return gammaB * epsilon;
+        return gamma * epsilon;
     }
 
     private static int part2(List<String> lines) {
         int lineWidth = lines.get(0).length();
         Collections.sort(lines);
 
-        int oxygenGenRating = findRating(new ArrayList<>(lines), lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? zeroes : ones);
-        int co2Rating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? ones : zeroes);
+        int oxygenGenRating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? -1 : 1);
+        int co2Rating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? 1 : -1);
         return oxygenGenRating * co2Rating;
     }
 
-    private static int findRating(List<String> candidateLines, int lineWidth, ListSelector listSelector) {
+    private static int findRating(List<String> sortedLines, int lineWidth, Comparator<List<String>> listSelector) {
+        List<String> candidatesLeft = new ArrayList<>(sortedLines);
         for (int charPos = 0; charPos < lineWidth; charPos++) {
             final List<String> zeroes = new ArrayList<>();
             final List<String> ones = new ArrayList<>();
-            for (int i = 0; i < candidateLines.size(); i++) {
-                final String line = candidateLines.get(i);
+            for (int lineIndex = 0; lineIndex < candidatesLeft.size(); lineIndex++) {
+                final String line = candidatesLeft.get(lineIndex);
                 if (line.isEmpty()) {
                     break;
-                }
-                if (line.charAt(charPos) == '0') {
+                } else if (line.charAt(charPos) == '0') {
                     zeroes.add(line);
                 } else {
-                    ones.addAll(candidateLines.subList(i, candidateLines.size()));
+                    ones.addAll(candidatesLeft.subList(lineIndex, candidatesLeft.size()));
                     break;
                 }
             }
-            candidateLines = listSelector.select(zeroes, ones);
-            if (candidateLines.size() == 1) {
-                return Integer.parseInt(candidateLines.get(0), 2);
+            candidatesLeft = listSelector.compare(zeroes, ones) > 0 ? zeroes : ones;
+            if (candidatesLeft.size() == 1) {
+                return Integer.parseInt(candidatesLeft.get(0), 2);
             }
         }
-        return Integer.parseInt(candidateLines.get(0), 2);
-    }
-
-    @FunctionalInterface
-    interface ListSelector {
-        List<String> select(List<String> zeroes, List<String> ones);
+        return Integer.parseInt(candidatesLeft.get(0), 2);
     }
 }
