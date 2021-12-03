@@ -18,17 +18,13 @@ public class App {
         short gamma = 0;
         short epsilon = 0;
         short[] occurrences = new short[LINE_WIDTH];
-
         for (String line : lines) {
-            if (line.isEmpty()) {
-                break;
-            }
+            if (line.isEmpty()) break;
             final char[] chars = line.toCharArray();
             for (int i = 0; i < chars.length; i++) {
                 occurrences[i] += chars[i] == '0' ? -1 : 1;
             }
         }
-
         for (byte i = 0; i < occurrences.length; i++) {
             if(occurrences[occurrences.length - 1 - i] > 0) {
                 gamma |= (1 << i);
@@ -38,29 +34,25 @@ public class App {
                 epsilon |= (1 << i);
             }
         }
-
         return gamma * epsilon;
     }
 
     private static int part2(List<String> lines) {
-        int lineWidth = lines.get(0).length();
         Collections.sort(lines);
-
-        int oxygenGenRating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? -1 : 1);
-        int co2Rating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? 1 : -1);
+        int oxygenGenRating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? -1 : 1);
+        int co2Rating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? 1 : -1);
         return oxygenGenRating * co2Rating;
     }
 
-    private static int findRating(List<String> sortedLines, int lineWidth, Comparator<List<String>> listSelector) {
+    private static int findRating(List<String> sortedLines, Comparator<List<String>> listSelector) {
         List<String> candidatesLeft = new ArrayList<>(sortedLines);
-        for (int charPos = 0; charPos < lineWidth; charPos++) {
+        for (int charPos = 0; charPos < LINE_WIDTH; charPos++) {
             final List<String> zeroes = new ArrayList<>();
             final List<String> ones = new ArrayList<>();
             for (int lineIndex = 0; lineIndex < candidatesLeft.size(); lineIndex++) {
                 final String line = candidatesLeft.get(lineIndex);
-                if (line.isEmpty()) {
-                    break;
-                } else if (line.charAt(charPos) == '0') {
+                if (line.isEmpty()) break;
+                else if (line.charAt(charPos) == '0') {
                     zeroes.add(line);
                 } else {
                     ones.addAll(candidatesLeft.subList(lineIndex, candidatesLeft.size()));
