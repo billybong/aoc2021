@@ -14,7 +14,8 @@ public class Test {
 
     static final Map<String, Answer> ANSWERS = Map.ofEntries(
             entry("day01", new Answer("1301", "1346")),
-            entry("day02", new Answer("2027977", "1903644897"))
+            entry("day02", new Answer("2027977", "1903644897")),
+            entry("day03", new Answer("4001724", "4001724"))
     );
 
     public static void main(String[] args) throws IOException {
