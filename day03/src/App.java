@@ -48,25 +48,28 @@ public class App {
         return oxygenGenRating * co2Rating;
     }
 
-    private static int findRating(List<String> lines, int lineWidth, ListSelector listSelector) {
+    private static int findRating(List<String> candidateLines, int lineWidth, ListSelector listSelector) {
         for (int charPos = 0; charPos < lineWidth; charPos++) {
             final List<String> zeroes = new ArrayList<>();
             final List<String> ones = new ArrayList<>();
-            for (int i = 0; i < lines.size(); i++) {
-                final String line = lines.get(i);
+            for (int i = 0; i < candidateLines.size(); i++) {
+                final String line = candidateLines.get(i);
+                if (line.isEmpty()) {
+                    break;
+                }
                 if (line.charAt(charPos) == '0') {
                     zeroes.add(line);
                 } else {
-                    ones.addAll(lines.subList(i, lines.size()));
+                    ones.addAll(candidateLines.subList(i, candidateLines.size()));
                     break;
                 }
             }
-            lines = listSelector.select(zeroes, ones);
-            if (lines.size() == 1) {
-                return Integer.parseInt(lines.get(0), 2);
+            candidateLines = listSelector.select(zeroes, ones);
+            if (candidateLines.size() == 1) {
+                return Integer.parseInt(candidateLines.get(0), 2);
             }
         }
-        return Integer.parseInt(lines.get(0), 2);
+        return Integer.parseInt(candidateLines.get(0), 2);
     }
 
     @FunctionalInterface
