@@ -15,8 +15,6 @@ public class App {
     }
 
     private static int part1(List<String> lines) {
-        short gamma = 0;
-        short epsilon = 0;
         short[] occurrences = new short[LINE_WIDTH];
         for (String line : lines) {
             if (line.isEmpty()) break;
@@ -25,6 +23,8 @@ public class App {
                 occurrences[i] += chars[i] == '0' ? -1 : 1;
             }
         }
+        short gamma = 0;
+        short epsilon = 0;
         for (byte i = 0; i < occurrences.length; i++) {
             if(occurrences[occurrences.length - 1 - i] > 0) {
                 gamma |= (1 << i);
