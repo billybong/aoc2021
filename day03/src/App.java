@@ -40,7 +40,37 @@ public class App {
     }
 
     private static int part2(List<String> lines) {
+        int lineWidth = lines.get(0).length();
+        Collections.sort(lines);
 
-        return 0;
+        int oxygenGenRating = findRating(new ArrayList<>(lines), lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? zeroes : ones);
+        int co2Rating = findRating(lines, lineWidth, (zeroes, ones) -> zeroes.size() > ones.size() ? ones : zeroes);
+        return oxygenGenRating * co2Rating;
+    }
+
+    private static int findRating(List<String> lines, int lineWidth, ListSelector listSelector) {
+        for (int charPos = 0; charPos < lineWidth; charPos++) {
+            final List<String> zeroes = new ArrayList<>();
+            final List<String> ones = new ArrayList<>();
+            for (int i = 0; i < lines.size(); i++) {
+                final String line = lines.get(i);
+                if (line.charAt(charPos) == '0') {
+                    zeroes.add(line);
+                } else {
+                    ones.addAll(lines.subList(i, lines.size()));
+                    break;
+                }
+            }
+            lines = listSelector.select(zeroes, ones);
+            if (lines.size() == 1) {
+                return Integer.parseInt(lines.get(0), 2);
+            }
+        }
+        return Integer.parseInt(lines.get(0), 2);
+    }
+
+    @FunctionalInterface
+    interface ListSelector {
+        List<String> select(List<String> zeroes, List<String> ones);
     }
 }
