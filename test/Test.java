@@ -62,20 +62,34 @@ public class Test {
                 .inheritIO()
                 .start()
                 .waitFor();
+        var solution1 = runTest(day, "graal", 1);
+        var solution2 = runTest(day, "graal", 2);
 
-        var solution1 = runTest(day, 1);
-        var solution2 = runTest(day, 2);
+        if (Files.exists(day.resolve("Dockerfile.openjdk"))) {
+            new ProcessBuilder("docker build -t aoc -f Dockerfile.openjdk .".split(" "))
+                    .directory(day.toFile())
+                    .inheritIO()
+                    .start()
+                    .waitFor();
+            runTest(day, "openjdk", 1);
+            runTest(day, "openjdk", 2);
+        }
 
         return new Answer(solution1, solution2);
     }
 
-    private static String runTest(Path day, int part) throws IOException, InterruptedException {
-        var process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + part, "aoc"))
+    private static String runTest(Path day, String platform, int part) throws IOException, InterruptedException {
+        System.out.println("Starting docker run day: " + day + " part: " + part + " on " + platform);
+        var process = new ProcessBuilder(List.of("docker", "run", "-e", "part=part" + part, "-e", "DEBUG=true", "aoc"))
                 .directory(day.toFile())
                 .start();
 
         var solution = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
         process.waitFor();
+        final String errorMsg = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+        if (errorMsg != null && !errorMsg.isEmpty()) {
+            System.out.println("DEBUG: " + errorMsg);
+        }
         return solution;
     }
 

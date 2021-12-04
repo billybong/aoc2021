@@ -1,0 +1,5 @@
+FROM openjdk:17-alpine
+COPY src .
+RUN javac *.java
+COPY input.txt .
+CMD ["java", "App"]

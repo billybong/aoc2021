@@ -10,8 +10,12 @@ public class App {
     private static final short LINE_WIDTH = 12;
 
     public static void main(String[] args) throws IOException {
+        final long start = System.getenv("DEBUG") != null ? System.nanoTime() : 0;
         var lines = Files.readAllLines(Paths.get("input.txt"));
         System.out.println("part2".equals(System.getenv("part")) ? part2(lines) : part1(lines));
+        if (start != 0) {
+            System.err.println("Execution time: " + (System.nanoTime() - (float) start) / 1_000_000 + " ms");
+        }
     }
 
     private static int part1(List<String> lines) {
@@ -26,7 +30,7 @@ public class App {
         short gamma = 0;
         short epsilon = 0;
         for (byte i = 0; i < occurrences.length; i++) {
-            if(occurrences[occurrences.length - 1 - i] > 0) {
+            if (occurrences[occurrences.length - 1 - i] > 0) {
                 gamma |= (1 << i);
                 epsilon &= ~(1 << i);
             } else {
