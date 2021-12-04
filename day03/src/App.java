@@ -59,6 +59,7 @@ public class App {
                 else if (line.charAt(charPos) == '0') {
                     zeroes.add(line);
                 } else {
+                    //list is sorted, so only 1's remain - add rest and exit iteration
                     ones.addAll(candidatesLeft.subList(lineIndex, candidatesLeft.size()));
                     break;
                 }
