@@ -52,16 +52,14 @@ public class App {
         List<String> candidatesLeft = new ArrayList<>(sortedLines);
         for (int charPos = 0; charPos < LINE_WIDTH; charPos++) {
             for (int lineIndex = 0; lineIndex < candidatesLeft.size(); lineIndex++) {
+                if (lineIndex == candidatesLeft.size() - 1) {
+                    //reached the end, found no ones - so all are zeroes
+                    break;
+                }
                 if (candidatesLeft.get(lineIndex).charAt(charPos) == '1') {
                     final List<String> zeroes = candidatesLeft.subList(0, lineIndex);
                     final List<String> ones = candidatesLeft.subList(lineIndex, candidatesLeft.size());
                     candidatesLeft = listSelector.compare(zeroes, ones) > 0 ? zeroes : ones;
-                    break;
-                } else if (lineIndex == candidatesLeft.size() - 1) {
-                    //reached the end, found no ones - so all are zeroes
-                    final List<String> zeroes = candidatesLeft;
-                    final List<String> ones = new ArrayList<>(0);
-                    candidatesLeft = listSelector.compare(candidatesLeft, ones) > 0 ? zeroes : ones;
                     break;
                 }
             }
