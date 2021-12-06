@@ -20,16 +20,13 @@ public class App {
 
         long previousBucket = 0;
         for (int day = 0; day < days; day++) {
-            for (int i = fishesByDaysUntilReproduction.length - 1; i >= 0; i--) {
-                if (i == 0) {
-                    fishesByDaysUntilReproduction[7] += previousBucket;
-                    fishesByDaysUntilReproduction[0] = 0;
-                } else {
-                    final long tempBucket = fishesByDaysUntilReproduction[i];
-                    fishesByDaysUntilReproduction[i] = previousBucket;
-                    previousBucket = tempBucket;
-                }
+            for (int i = fishesByDaysUntilReproduction.length - 1; i > 0; i--) {
+                final long tempBucket = fishesByDaysUntilReproduction[i];
+                fishesByDaysUntilReproduction[i] = previousBucket;
+                previousBucket = tempBucket;
             }
+            fishesByDaysUntilReproduction[7] += previousBucket;
+            fishesByDaysUntilReproduction[0] = 0;
         }
 
         return LongStream.of(fishesByDaysUntilReproduction).sum();
