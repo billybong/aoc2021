@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
 import java.util.stream.LongStream;
 
 public class App {
@@ -11,11 +12,10 @@ public class App {
         }
     }
     private static long solution(String line, int days) {
-        final String[] initialState = line.split(",");
         final long[] fishesByDaysUntilReproduction = new long[9];
-
-        for (final String state : initialState) {
-            fishesByDaysUntilReproduction[Integer.parseInt(state)]++;
+        final StringTokenizer tokenizer = new StringTokenizer(line, ",");
+        while (tokenizer.hasMoreElements()) {
+            fishesByDaysUntilReproduction[Integer.parseInt(tokenizer.nextToken())]++;
         }
 
         long previousBucket = 0;
