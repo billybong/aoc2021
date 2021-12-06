@@ -1,22 +1,41 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.stream.LongStream;
 
 public class App {
-    private static final short LINE_WIDTH = 12;
+    private static final short FISH_REPOPULATION = 7;
 
     public static void main(String[] args) throws IOException {
-        var lines = Files.readAllLines(Paths.get("input.txt"));
-        final int result = "part2".equals(System.getenv("part")) ? part2(lines) : part1(lines);
-        System.out.println(result);
+        try (final BufferedReader br = new BufferedReader(new FileReader("input.txt"))){
+            final String line = br.readLine();
+            final int days = "part2".equals(System.getenv("part")) ? 256 : 80;
+            System.out.println(solution(line, days));
+        }
     }
 
-    private static int part1(List<String> lines) {
-        return 0;
-    }
+    private static long solution(String line, int days) {
+        final String[] initialState = line.split(",");
+        final long[] fishesByDaysUntilReproduction = new long[9];
 
-    private static int part2(List<String> lines) {
-        return 0;
+        for (final String state : initialState) {
+            fishesByDaysUntilReproduction[Integer.parseInt(state)]++;
+        }
+
+        long previousBucket = 0;
+        for (int day = 0; day < days; day++) {
+            for (int i = fishesByDaysUntilReproduction.length - 1; i >= 0; i--) {
+                if (i == 0) {
+                    fishesByDaysUntilReproduction[7] += previousBucket;
+                    fishesByDaysUntilReproduction[0] = 0;
+                } else {
+                    final long tempBucket = fishesByDaysUntilReproduction[i];
+                    fishesByDaysUntilReproduction[i] = previousBucket;
+                    previousBucket = tempBucket;
+                }
+            }
+        }
+
+        return LongStream.of(fishesByDaysUntilReproduction).sum();
     }
 }

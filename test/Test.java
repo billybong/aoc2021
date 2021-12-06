@@ -16,7 +16,7 @@ public class Test {
             entry("day01", new Answer("1301", "1346")),
             entry("day02", new Answer("2027977", "1903644897")),
             entry("day03", new Answer("4001724", "587895")),
-            entry("day06", new Answer("4001724", "587895"))
+            entry("day06", new Answer("386640", "1733403626279"))
     );
 
     public static void main(String[] args) throws IOException {
