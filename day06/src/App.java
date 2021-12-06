@@ -26,7 +26,6 @@ public class App {
                 previousBucket = tempBucket;
             }
             fishesByDaysUntilReproduction[7] += previousBucket;
-            fishesByDaysUntilReproduction[0] = 0;
         }
 
         return LongStream.of(fishesByDaysUntilReproduction).sum();
