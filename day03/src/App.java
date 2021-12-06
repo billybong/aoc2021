@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class App {
-    private static final short LINE_WIDTH = 12;
 
     public static void main(String[] args) throws IOException {
         final long start = System.getenv("DEBUG") != null ? System.nanoTime() : 0;
@@ -19,7 +18,7 @@ public class App {
     }
 
     private static int part1(List<String> lines) {
-        short[] occurrences = new short[LINE_WIDTH];
+        short[] occurrences = new short[lines.get(0).length()];
         for (String line : lines) {
             if (line.isEmpty()) break;
             final char[] chars = line.toCharArray();
@@ -43,23 +42,24 @@ public class App {
 
     private static int part2(List<String> lines) {
         Collections.sort(lines);
-        int oxygenGenRating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? -1 : 1);
-        int co2Rating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? 1 : -1);
+        final int lineWidth = lines.get(0).length();
+        int oxygenGenRating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? -1 : 1, lineWidth);
+        int co2Rating = findRating(lines, (zeroes, ones) -> zeroes.size() > ones.size() ? 1 : -1, lineWidth);
         return oxygenGenRating * co2Rating;
     }
 
-    private static int findRating(List<String> sortedLines, Comparator<List<String>> listSelector) {
+    private static int findRating(List<String> sortedLines, Comparator<List<String>> listSelector, int lineWidth) {
         List<String> candidatesLeft = new ArrayList<>(sortedLines);
-        for (int charPos = 0; charPos < LINE_WIDTH; charPos++) {
+        for (int charPos = 0; charPos < lineWidth; charPos++) {
             for (int lineIndex = 0; lineIndex < candidatesLeft.size(); lineIndex++) {
-                if (lineIndex == candidatesLeft.size() - 1) {
-                    //reached the end, found no ones - so all are zeroes
-                    break;
-                }
                 if (candidatesLeft.get(lineIndex).charAt(charPos) == '1') {
                     final List<String> zeroes = candidatesLeft.subList(0, lineIndex);
                     final List<String> ones = candidatesLeft.subList(lineIndex, candidatesLeft.size());
                     candidatesLeft = listSelector.compare(zeroes, ones) > 0 ? zeroes : ones;
+                    break;
+                }
+                if (lineIndex == candidatesLeft.size() - 1) {
+                    //reached the end, found no ones - so all are zeroes
                     break;
                 }
             }
