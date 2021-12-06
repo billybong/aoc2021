@@ -1,31 +1,41 @@
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class App {
 
     public static void main(String[] args) throws IOException {
         final long start = System.getenv("DEBUG") != null ? System.nanoTime() : 0;
-        var lines = Files.readAllLines(Paths.get("input.txt"));
-        System.out.println("part2".equals(System.getenv("part")) ? part2(lines) : part1(lines));
+        System.out.println("part2".equals(System.getenv("part")) ? part2(lines(new File("input.txt"))) : part1());
         if (start != 0) {
-            System.err.println("Execution time: " + (System.nanoTime() - (float) start) / 1_000_000 + " ms");
+            System.err.printf("Execution time: %.10f ms%n", ((float) System.nanoTime() - (float) start) / 1_000_000);
         }
     }
 
-    private static int part1(List<String> lines) {
-        short[] occurrences = new short[lines.get(0).length()];
-        for (String line : lines) {
-            if (line.isEmpty()) break;
-            final char[] chars = line.toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                occurrences[i] += chars[i] == '0' ? -1 : 1;
+    private static int part1() throws IOException {
+        short[] occurrences = null;
+        final BufferedReader br = new BufferedReader(new FileReader("input.txt"));
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (occurrences == null) {
+                    occurrences = new short[line.length()];
+                }
+                final char[] chars = line.toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    occurrences[i] += chars[i] == '0' ? -1 : 1;
+                }
             }
+        } finally {
+            br.close();
         }
+
         short gamma = 0;
         short epsilon = 0;
         for (byte i = 0; i < occurrences.length; i++) {
@@ -69,5 +79,19 @@ public class App {
             }
         }
         return Integer.parseInt(candidatesLeft.get(0), 2);
+    }
+
+    private static List<String> lines(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        final List<String> lines = new ArrayList<>(2000);
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+        } finally {
+            br.close();
+        }
+        return lines;
     }
 }
