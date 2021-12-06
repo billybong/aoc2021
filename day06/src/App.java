@@ -5,10 +5,9 @@ import java.util.stream.LongStream;
 
 public class App {
     public static void main(String[] args) throws IOException {
+        final int days = "part2".equals(System.getenv("part")) ? 256 : 80;
         try (final BufferedReader br = new BufferedReader(new FileReader("input.txt"))){
-            final String line = br.readLine();
-            final int days = "part2".equals(System.getenv("part")) ? 256 : 80;
-            System.out.println(solution(line, days));
+            System.out.println(solution(br.readLine(), days));
         }
     }
     private static long solution(String line, int days) {
