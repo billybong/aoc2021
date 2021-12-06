@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.stream.LongStream;
 
 public class App {
-    private static final short FISH_REPOPULATION = 7;
-
     public static void main(String[] args) throws IOException {
         try (final BufferedReader br = new BufferedReader(new FileReader("input.txt"))){
             final String line = br.readLine();
@@ -13,7 +11,6 @@ public class App {
             System.out.println(solution(line, days));
         }
     }
-
     private static long solution(String line, int days) {
         final String[] initialState = line.split(",");
         final long[] fishesByDaysUntilReproduction = new long[9];
